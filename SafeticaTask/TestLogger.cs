@@ -6,6 +6,7 @@ namespace SafeticaTask;
 /// <param name="logFilePath">Path to file for logging</param>
 public class TestLogger(string logFilePath)
 {
+    public static readonly string DefaultLogFilePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "logs", "log.txt");
     private string LogFilePath { get; } = logFilePath;
 
     /// <summary>

@@ -4,13 +4,13 @@ namespace SafeticaTask;
 
 public class CommonTest
 {
-    private readonly TestLogger _testLogger = new(TestLogger.DefaultLogFilePath);
+    protected readonly TestLogger TestLogger = new(TestLogger.DefaultLogFilePath);
     private string TestName => TestContext.CurrentContext.Test.FullName;
 
     [SetUp]
     public void Setup()
     {
-        _testLogger.LogTestStart(TestName);
+        TestLogger.LogTestStart(TestName);
     }
 
     [TearDown]
@@ -20,11 +20,11 @@ public class CommonTest
 
         if (testResult.Equals(ResultState.Success))
         {
-            _testLogger.LogTestPassed(TestName);
+            TestLogger.LogTestPassed(TestName);
             return;
         }
 
         var failMessage = TestContext.CurrentContext.Result.Message ?? "";
-        _testLogger.LogTestFailed(TestName, failMessage);
+        TestLogger.LogTestFailed(TestName, failMessage);
     }
 }

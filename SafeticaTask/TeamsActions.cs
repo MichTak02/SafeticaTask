@@ -28,16 +28,20 @@ public class TeamsActions
     
     public void LogIn(string login, string password)
     {
+        Logger.LogAction($"Navigating to {TeamsUrl}");
         WebDriver.Navigate().GoToUrl(TeamsUrl);
         
+        Logger.LogAction("Filling in a login and going to next page");
         FillField(LoginFieldId, login);
         ClickButton(SubmitButtonId);
         
+        Logger.LogAction("Filling password and going to next page");
         FillField(PasswordFieldId, password);
         string url = WebDriver.Url;
         ClickButton(SubmitButtonId);
-        Wait.Until(_ => url != WebDriver.Url);
         
+        Logger.LogAction("Confirming to stay logged in");
+        Wait.Until(_ => url != WebDriver.Url);  // Wait for "stay logged in?" screen before clicking button with the same id
         ClickButton(SubmitButtonId);
     }
 

@@ -57,11 +57,7 @@ public class TeamsActions
         Logger.LogAction($"Selecting chat '{chatName}'");
         string chatXPath = $"//*[starts-with(@title, '{chatName}')]";
 
-        var chatElement = Wait.Until(driver =>
-        {
-            var element = driver.FindElement(By.XPath(chatXPath));
-            return element.Displayed ? element : null;
-        });
+        var chatElement = WaitForDisplayed(By.XPath(chatXPath));
         
         // Use instead of chatElement.Click() to avoid ElementClickInterceptedException
         ((IJavaScriptExecutor)WebDriver).ExecuteScript("arguments[0].click();", chatElement);
@@ -88,9 +84,14 @@ public class TeamsActions
 
     private IWebElement WaitForDisplayed(string id)
     {
+        return WaitForDisplayed(By.Id(id));
+    }
+    
+    private IWebElement WaitForDisplayed(By by)
+    {
         return Wait.Until(driver =>
         {
-            var element = driver.FindElement(By.Id(id));
+            var element = driver.FindElement(by);
             return element.Displayed ? element : null;
         });
     }

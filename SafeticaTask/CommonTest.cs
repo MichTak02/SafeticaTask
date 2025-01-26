@@ -18,6 +18,8 @@ public class CommonTest
     [TearDown]
     public void TearDown()
     {
+        Driver?.Quit();
+        
         var testResult = TestContext.CurrentContext.Result.Outcome;
 
         if (testResult.Equals(ResultState.Success))
@@ -28,7 +30,5 @@ public class CommonTest
 
         var failMessage = TestContext.CurrentContext.Result.Message ?? "";
         TestLogger.LogTestFailed(TestName, failMessage);
-        
-        Driver?.Quit();
     }
 }

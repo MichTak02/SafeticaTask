@@ -1,4 +1,5 @@
 using NUnit.Framework.Interfaces;
+using OpenQA.Selenium;
 
 namespace SafeticaTask;
 
@@ -6,6 +7,7 @@ public class CommonTest
 {
     protected readonly TestLogger TestLogger = new(TestLogger.DefaultLogFilePath);
     private string TestName => TestContext.CurrentContext.Test.FullName;
+    protected WebDriver? Driver;
 
     [SetUp]
     public void Setup()
@@ -26,5 +28,7 @@ public class CommonTest
 
         var failMessage = TestContext.CurrentContext.Result.Message ?? "";
         TestLogger.LogTestFailed(TestName, failMessage);
+        
+        Driver?.Quit();
     }
 }

@@ -84,15 +84,18 @@ public class TeamsActions
     public void AttachFile(string fileName)
     {
         // Click plus symbol
+        Logger.LogAction("Clicking on plus symbol to add file");
         WaitForDisplayed(By.Name(PlusSymbolName)).Click();
         
         // Select attach file
+        Logger.LogAction("Selecting to attach file");
         var flyoutListItems = GetMultipleElements(ByDataTid(FlyoutListDataTid), 3);
         
         var attachFileId = flyoutListItems.Select(item => item.GetAttribute("id")).First();
         ClickButton(attachFileId);
 
         // Select attach cloud file
+        Logger.LogAction("Selecting to attach cloud file");
         WaitForDisplayed(ByDataTid(AttachFromCloudDataTid)).Click();
 
         // Switch to popup window
@@ -101,12 +104,15 @@ public class TeamsActions
         WebDriver.SwitchTo().Frame(iframe);
 
         // Select My files
+        Logger.LogAction("Selecting My files");
         Wait.Until(driver => driver.FindElement(By.ClassName(MyFilesClassName))).Click();
         
         // Select File
+        Logger.LogAction("Selecting file");
         WaitForDisplayed(By.XPath($"//*[text()='{fileName}']")).Click();
 
         // Click on attach file
+        Logger.LogAction("Clicking on Attach file button");
         WaitForDisplayed(By.ClassName(PrimaryButtonClassName)).Click();
         
         WebDriver.SwitchTo().DefaultContent();

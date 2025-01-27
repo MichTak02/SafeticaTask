@@ -24,7 +24,10 @@ public class TeamsActions
     private static readonly string MyFilesClassName = "navLink_26dbef85";
     private static readonly string PrimaryButtonClassName = "ms-Button--primary";
     
-
+    private static readonly string MessageFieldDataTid = "ckeditor";
+    private static readonly string SendButtonDataTid = "sendMessageCommands-send";
+    private static readonly string SendButtonWithFileDataTid = "newMessageCommands-send";
+    
     public WebDriver WebDriver { get; }
     public TestLogger Logger { get; }
     public WebDriverWait Wait { get; }
@@ -81,7 +84,7 @@ public class TeamsActions
         SelectChat(DefaultChatName);
     }
     
-    public void AttachFile(string fileName)
+    public void SendFile(string fileName)
     {
         // Click plus symbol
         Logger.LogAction("Clicking on plus symbol to add file");
@@ -97,7 +100,7 @@ public class TeamsActions
         // Select attach cloud file
         Logger.LogAction("Selecting to attach cloud file");
         WaitForDisplayed(ByDataTid(AttachFromCloudDataTid)).Click();
-
+        
         // Switch to popup window
         var iframes = GetMultipleElements(By.TagName("iframe"), 2);
         var iframe = iframes.First(frame => frame.GetAttribute(FileSelectPopupAttribute) is not null);
@@ -114,26 +117,43 @@ public class TeamsActions
         // Click on attach file
         Logger.LogAction("Clicking on Attach file button");
         WaitForDisplayed(By.ClassName(PrimaryButtonClassName)).Click();
-        
+
         WebDriver.SwitchTo().DefaultContent();
+        Logger.LogAction("Sending file");
+        ClickButton(ByDataTid(SendButtonWithFileDataTid));
     }
 
-    public void AttachFile()
+    public void SendFile()
     {
-        AttachFile(DeafultFileName);
+        SendFile(DeafultFileName);
     }
 
+    public void SendMessage(string message)
+    {
+        Logger.LogAction("Sending message");
+        FillField(ByDataTid(MessageFieldDataTid), message);
+        ClickButton(ByDataTid(SendButtonDataTid));
+    }
+    
     private void FillField(string id, string text)
     {
-        IWebElement element = WaitForDisplayed(id);
-
-        element.Clear();
+        FillField(By.Id(id), text);
+    }
+    
+    private void FillField(By by, string text)
+    {
+        IWebElement element = WaitForDisplayed(by);
         element.SendKeys(text);
     }
 
     private void ClickButton(string id)
     {
-        IWebElement button = WaitForDisplayed(id);
+        ClickButton(By.Id(id));
+    }
+    
+    private void ClickButton(By by)
+    {
+        IWebElement button = WaitForDisplayed(by);
         button.Click();
     }
 

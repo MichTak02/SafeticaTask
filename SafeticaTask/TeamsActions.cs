@@ -6,6 +6,7 @@ namespace SafeticaTask;
 
 public class TeamsActions
 {
+    private static readonly TimeSpan DefaultWaitTimeout = TimeSpan.FromSeconds(15);
     private static readonly string TeamsUrl = "https://teams.microsoft.com/v2/";
     private static readonly string DefaultLogin = "qa@safeticaservices.onmicrosoft.com";
     private static readonly string DefaultPassword = "automation.Safetica2004";
@@ -28,13 +29,16 @@ public class TeamsActions
     public TestLogger Logger { get; }
     public WebDriverWait Wait { get; }
 
-    public TeamsActions(WebDriver webDriver, TestLogger logger)
+    public TeamsActions(WebDriver webDriver, TestLogger logger) : this(webDriver, logger, DefaultWaitTimeout)
+    {
+    }
+
+    public TeamsActions(WebDriver webDriver, TestLogger logger, TimeSpan waitTimeout)
     {
         WebDriver = webDriver;
         Logger = logger;
-        Wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(15));
+        Wait = new WebDriverWait(WebDriver, waitTimeout);
     }
-
 
     public void LogIn(string login, string password)
     {

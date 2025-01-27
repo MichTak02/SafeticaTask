@@ -119,7 +119,7 @@ public class TeamsActions
         
         // Select Files
         Logger.LogAction("Selecting file");
-        SelectMultipleItems(fileNames);
+        fileNames.ForEach(fileName => ClickButton(By.XPath($"//*[@title='{fileName}']"), false));
         
         // Click on attach file
         Logger.LogAction("Clicking on Attach file button");
@@ -151,7 +151,7 @@ public class TeamsActions
         
         // Select attach file
         Logger.LogAction("Selecting to attach file");
-        var flyoutListItems = GetMultipleElements(ByDataTid(FlyoutListDataTid), 3);
+        var flyoutListItems = GetMultipleElementsRange(ByDataTid(FlyoutListDataTid), 2, 3);
         
         var attachFileId = flyoutListItems.Select(item => item.GetAttribute("id")).First();
         ClickButton(By.Id(attachFileId));
@@ -172,9 +172,9 @@ public class TeamsActions
         element.SendKeys(text);
     }
     
-    private void ClickButton(By by)
+    private void ClickButton(By by, bool mustBeDisplayed = true)
     {
-        IWebElement button = WaitForDisplayed(by);
+        IWebElement button = mustBeDisplayed ? WaitForDisplayed(by) : Wait.Until(driver => driver.FindElement(by));
         button.Click();
     }
     
@@ -189,23 +189,21 @@ public class TeamsActions
 
     private ReadOnlyCollection<IWebElement> GetMultipleElements(By by, int number)
     {
+        return GetMultipleElementsRange(by, number, number);
+    }
+
+    private ReadOnlyCollection<IWebElement> GetMultipleElementsRange(By by, int min, int max)
+    {
         return Wait.Until(driver =>
         {
             var elements = driver.FindElements(by);
-            return elements.Count == number ? elements : null;
+            return elements.Count >= min && elements.Count <= max ? elements : null;
         });
     }
 
     private By ByDataTid(string value)
     {
         return By.XPath($"//*[@data-tid='{value}']");
-    }
-
-    private void SelectMultipleItems(List<string> itemNames)
-    {
-        Actions.KeyDown(Keys.Control).Perform();
-        itemNames.ForEach(itemName => ClickButton(By.XPath($"//*[text()='{itemName}']")));
-        Actions.KeyUp(Keys.Control).Perform();
     }
 
     private void CheckLoginStatus(string operation)

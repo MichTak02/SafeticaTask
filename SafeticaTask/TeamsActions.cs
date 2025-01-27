@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 
 namespace SafeticaTask;
@@ -15,7 +16,8 @@ public class TeamsActions
     private static readonly string PasswordFieldId = "i0118";
     private static readonly string SubmitButtonId = "idSIButton9";
     private static readonly string DefaultChatName = "Safetica QA";
-    private static readonly string DeafultFileName = "PdfFile.pdf";
+    private static readonly string DeafultFileName1 = "PdfFile.pdf";
+    private static readonly string DeafultFileName2 = "TxtFile.txt";
 
     private static readonly string PlusSymbolName = "message-extension-flyout-command";
     private static readonly string FlyoutListDataTid = "flyout-list-item";
@@ -31,6 +33,7 @@ public class TeamsActions
     public WebDriver WebDriver { get; }
     public TestLogger Logger { get; }
     public WebDriverWait Wait { get; }
+    public Actions Actions { get; }
 
     public TeamsActions(WebDriver webDriver, TestLogger logger) : this(webDriver, logger, DefaultWaitTimeout)
     {
@@ -41,6 +44,7 @@ public class TeamsActions
         WebDriver = webDriver;
         Logger = logger;
         Wait = new WebDriverWait(WebDriver, waitTimeout);
+        Actions = new Actions(WebDriver);
     }
 
     public void LogIn(string login, string password)
@@ -83,8 +87,18 @@ public class TeamsActions
     {
         SelectChat(DefaultChatName);
     }
-    
+
     public void SendFile(string fileName)
+    {
+        SendFiles([fileName]);
+    }
+
+    public void SendFile()
+    {
+        SendFile(DeafultFileName1);
+    }
+
+    public void SendFiles(List<string> fileNames)
     {
         // Click plus symbol
         Logger.LogAction("Clicking on plus symbol to add file");
@@ -110,22 +124,24 @@ public class TeamsActions
         Logger.LogAction("Selecting My files");
         Wait.Until(driver => driver.FindElement(By.ClassName(MyFilesClassName))).Click();
         
-        // Select File
+        // Select Files
         Logger.LogAction("Selecting file");
-        WaitForDisplayed(By.XPath($"//*[text()='{fileName}']")).Click();
-
+        Actions.KeyDown(Keys.Control).Perform();
+        fileNames.ForEach(fileName => ClickButton(By.XPath($"//*[text()='{fileName}']")));
+        Actions.KeyUp(Keys.Control).Perform();
+        
         // Click on attach file
         Logger.LogAction("Clicking on Attach file button");
         WaitForDisplayed(By.ClassName(PrimaryButtonClassName)).Click();
 
         WebDriver.SwitchTo().DefaultContent();
-        Logger.LogAction("Sending file");
+        Logger.LogAction("Sending file(s)");
         ClickButton(ByDataTid(SendButtonWithFileDataTid));
     }
 
-    public void SendFile()
+    public void SendFiles()
     {
-        SendFile(DeafultFileName);
+        SendFiles([DeafultFileName1, DeafultFileName2]);
     }
 
     public void SendMessage(string message)

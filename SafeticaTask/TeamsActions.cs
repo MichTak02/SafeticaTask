@@ -53,18 +53,18 @@ public class TeamsActions
         WebDriver.Navigate().GoToUrl(TeamsUrl);
 
         Logger.LogAction("Filling in a login and going to next page");
-        FillField(LoginFieldId, login);
-        ClickButton(SubmitButtonId);
+        FillField(By.Id(LoginFieldId), login);
+        ClickButton(By.Id(SubmitButtonId));
 
         Logger.LogAction("Filling password and going to next page");
-        FillField(PasswordFieldId, password);
+        FillField(By.Id(PasswordFieldId), password);
         string url = WebDriver.Url;
-        ClickButton(SubmitButtonId);
+        ClickButton(By.Id(SubmitButtonId));
 
         Logger.LogAction("Confirming to stay logged in");
         Wait.Until(_ =>
             url != WebDriver.Url); // Wait for "stay logged in?" screen before clicking button with the same id
-        ClickButton(SubmitButtonId);
+        ClickButton(By.Id(SubmitButtonId));
     }
 
     public void LogIn()
@@ -142,7 +142,7 @@ public class TeamsActions
         var flyoutListItems = GetMultipleElements(ByDataTid(FlyoutListDataTid), 3);
         
         var attachFileId = flyoutListItems.Select(item => item.GetAttribute("id")).First();
-        ClickButton(attachFileId);
+        ClickButton(By.Id(attachFileId));
 
         // Select attach cloud file
         Logger.LogAction("Selecting to attach cloud file");
@@ -154,31 +154,16 @@ public class TeamsActions
         WebDriver.SwitchTo().Frame(iframe);
     }
     
-    private void FillField(string id, string text)
-    {
-        FillField(By.Id(id), text);
-    }
-    
     private void FillField(By by, string text)
     {
         IWebElement element = WaitForDisplayed(by);
         element.SendKeys(text);
-    }
-
-    private void ClickButton(string id)
-    {
-        ClickButton(By.Id(id));
     }
     
     private void ClickButton(By by)
     {
         IWebElement button = WaitForDisplayed(by);
         button.Click();
-    }
-
-    private IWebElement WaitForDisplayed(string id)
-    {
-        return WaitForDisplayed(By.Id(id));
     }
     
     private IWebElement WaitForDisplayed(By by)

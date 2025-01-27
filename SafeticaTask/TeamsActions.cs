@@ -35,7 +35,6 @@ public class TeamsActions
     public WebDriver WebDriver { get; }
     public TestLogger Logger { get; }
     public WebDriverWait Wait { get; }
-    public Actions Actions { get; }
     public bool LoggedIn { get; private set; }
 
     public TeamsActions(WebDriver webDriver, TestLogger logger) : this(webDriver, logger, DefaultWaitTimeout)
@@ -47,7 +46,6 @@ public class TeamsActions
         WebDriver = webDriver;
         Logger = logger;
         Wait = new WebDriverWait(WebDriver, waitTimeout);
-        Actions = new Actions(WebDriver);
         LoggedIn = false;
     }
 

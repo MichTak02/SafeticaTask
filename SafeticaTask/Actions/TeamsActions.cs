@@ -1,10 +1,8 @@
-using System.Collections.ObjectModel;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using SafeticaTask.Exceptions;
 
-namespace SafeticaTask;
+namespace SafeticaTask.Actions;
 
 public class TeamsActions
 {
@@ -36,6 +34,7 @@ public class TeamsActions
     public TestLogger Logger { get; }
     public WebDriverWait Wait { get; }
     public bool LoggedIn { get; private set; }
+    public GenericActions GenericActions { get; }
 
     public TeamsActions(WebDriver webDriver, TestLogger logger) : this(webDriver, logger, DefaultWaitTimeout)
     {
@@ -47,6 +46,7 @@ public class TeamsActions
         Logger = logger;
         Wait = new WebDriverWait(WebDriver, waitTimeout);
         LoggedIn = false;
+        GenericActions = new GenericActions(WebDriver, Wait);
     }
 
     public void LogIn(string login, string password)
@@ -55,18 +55,18 @@ public class TeamsActions
         WebDriver.Navigate().GoToUrl(TeamsUrl);
 
         Logger.LogAction("Filling in a login and going to next page");
-        FillField(By.Id(LoginFieldId), login);
-        ClickButton(By.Id(SubmitButtonId));
+        GenericActions.FillField(By.Id(LoginFieldId), login);
+        GenericActions.ClickButton(By.Id(SubmitButtonId));
 
         Logger.LogAction("Filling password and going to next page");
-        FillField(By.Id(PasswordFieldId), password);
+        GenericActions.FillField(By.Id(PasswordFieldId), password);
         string url = WebDriver.Url;
-        ClickButton(By.Id(SubmitButtonId));
+        GenericActions.ClickButton(By.Id(SubmitButtonId));
 
         Logger.LogAction("Confirming to stay logged in");
         Wait.Until(_ =>
             url != WebDriver.Url); // Wait for "stay logged in?" screen before clicking button with the same id
-        ClickButton(By.Id(SubmitButtonId));
+        GenericActions.ClickButton(By.Id(SubmitButtonId));
         
         Wait.Until(driver => driver.Url == "https://teams.microsoft.com/v2/");
         LoggedIn = true;
@@ -83,7 +83,7 @@ public class TeamsActions
         Logger.LogAction($"Selecting chat '{chatName}'");
         string chatXPath = $"//*[starts-with(@title, '{chatName}')]";
 
-        var chatElement = WaitForDisplayed(By.XPath(chatXPath));
+        var chatElement = GenericActions.WaitForDisplayed(By.XPath(chatXPath));
         
         // Use instead of chatElement.Click() to avoid ElementClickInterceptedException
         ((IJavaScriptExecutor)WebDriver).ExecuteScript("arguments[0].click();", chatElement);
@@ -117,15 +117,15 @@ public class TeamsActions
         
         // Select Files
         Logger.LogAction("Selecting file");
-        fileNames.ForEach(fileName => ClickButton(By.XPath($"//*[@title='{fileName}']"), false));
+        fileNames.ForEach(fileName => GenericActions.ClickButton(By.XPath($"//*[@title='{fileName}']"), false));
         
         // Click on attach file
         Logger.LogAction("Clicking on Attach file button");
-        WaitForDisplayed(By.ClassName(PrimaryButtonClassName)).Click();
+        GenericActions.WaitForDisplayed(By.ClassName(PrimaryButtonClassName)).Click();
 
         WebDriver.SwitchTo().DefaultContent();
         Logger.LogAction("Sending file(s)");
-        ClickButton(ByDataTid(SendButtonWithFileDataTid));
+        GenericActions.ClickButton(ByDataTid(SendButtonWithFileDataTid));
     }
 
     public void SendFiles()
@@ -136,67 +136,32 @@ public class TeamsActions
     public void SendMessage(string message)
     {
         CheckLoginStatus("send message");
-        Logger.LogAction("Sending message");
-        FillField(ByDataTid(MessageFieldDataTid), message);
-        ClickButton(ByDataTid(SendButtonDataTid));
+        Logger.LogAction($"Sending message '{message}'");
+        GenericActions.FillField(ByDataTid(MessageFieldDataTid), message);
+        GenericActions.ClickButton(ByDataTid(SendButtonDataTid));
     }
-
-    private void OpenFileSelectPopup()
+    
+    public void OpenFileSelectPopup()
     {
         // Click plus symbol
         Logger.LogAction("Clicking on plus symbol to add file");
-        WaitForDisplayed(By.Name(PlusSymbolName)).Click();
+        GenericActions.WaitForDisplayed(By.Name(PlusSymbolName)).Click();
         
         // Select attach file
         Logger.LogAction("Selecting to attach file");
-        var flyoutListItems = GetMultipleElementsRange(ByDataTid(FlyoutListDataTid), 2, 3);
+        var flyoutListItems = GenericActions.GetMultipleElementsRange(ByDataTid(FlyoutListDataTid), 2, 3);
         
         var attachFileId = flyoutListItems.Select(item => item.GetAttribute("id")).First();
-        ClickButton(By.Id(attachFileId));
+        GenericActions.ClickButton(By.Id(attachFileId));
 
         // Select attach cloud file
         Logger.LogAction("Selecting to attach cloud file");
-        WaitForDisplayed(ByDataTid(AttachFromCloudDataTid)).Click();
+        GenericActions.WaitForDisplayed(ByDataTid(AttachFromCloudDataTid)).Click();
         
         // Switch to popup window
-        var iframes = GetMultipleElements(By.TagName("iframe"), 2);
+        var iframes = GenericActions.GetMultipleElements(By.TagName("iframe"), 2);
         var iframe = iframes.First(frame => frame.GetAttribute(FileSelectPopupAttribute) is not null);
         WebDriver.SwitchTo().Frame(iframe);
-    }
-    
-    private void FillField(By by, string text)
-    {
-        IWebElement element = WaitForDisplayed(by);
-        element.SendKeys(text);
-    }
-    
-    private void ClickButton(By by, bool mustBeDisplayed = true)
-    {
-        IWebElement button = mustBeDisplayed ? WaitForDisplayed(by) : Wait.Until(driver => driver.FindElement(by));
-        button.Click();
-    }
-    
-    private IWebElement WaitForDisplayed(By by)
-    {
-        return Wait.Until(driver =>
-        {
-            var element = driver.FindElement(by);
-            return element.Displayed ? element : null;
-        });
-    }
-
-    private ReadOnlyCollection<IWebElement> GetMultipleElements(By by, int number)
-    {
-        return GetMultipleElementsRange(by, number, number);
-    }
-
-    private ReadOnlyCollection<IWebElement> GetMultipleElementsRange(By by, int min, int max)
-    {
-        return Wait.Until(driver =>
-        {
-            var elements = driver.FindElements(by);
-            return elements.Count >= min && elements.Count <= max ? elements : null;
-        });
     }
 
     private By ByDataTid(string value)

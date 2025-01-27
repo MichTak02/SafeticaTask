@@ -16,8 +16,8 @@ public class TeamsActions
     private static readonly string PasswordFieldId = "i0118";
     private static readonly string SubmitButtonId = "idSIButton9";
     private static readonly string DefaultChatName = "Safetica QA";
-    private static readonly string DeafultFileName1 = "PdfFile.pdf";
-    private static readonly string DeafultFileName2 = "TxtFile.txt";
+    private static readonly string DefaultFileName1 = "PdfFile.pdf";
+    private static readonly string DefaultFileName2 = "TxtFile.txt";
 
     private static readonly string PlusSymbolName = "message-extension-flyout-command";
     private static readonly string FlyoutListDataTid = "flyout-list-item";
@@ -95,7 +95,7 @@ public class TeamsActions
 
     public void SendFile()
     {
-        SendFile(DeafultFileName1);
+        SendFile(DefaultFileName1);
     }
 
     public void SendFiles(List<string> fileNames)
@@ -121,7 +121,7 @@ public class TeamsActions
 
     public void SendFiles()
     {
-        SendFiles([DeafultFileName1, DeafultFileName2]);
+        SendFiles([DefaultFileName1, DefaultFileName2]);
     }
 
     public void SendMessage(string message)

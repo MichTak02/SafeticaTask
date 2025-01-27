@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
+using SafeticaTask.Exceptions;
 
 namespace SafeticaTask;
 
@@ -35,6 +36,7 @@ public class TeamsActions
     public TestLogger Logger { get; }
     public WebDriverWait Wait { get; }
     public Actions Actions { get; }
+    public bool LoggedIn { get; private set; }
 
     public TeamsActions(WebDriver webDriver, TestLogger logger) : this(webDriver, logger, DefaultWaitTimeout)
     {
@@ -46,6 +48,7 @@ public class TeamsActions
         Logger = logger;
         Wait = new WebDriverWait(WebDriver, waitTimeout);
         Actions = new Actions(WebDriver);
+        LoggedIn = false;
     }
 
     public void LogIn(string login, string password)
@@ -66,6 +69,9 @@ public class TeamsActions
         Wait.Until(_ =>
             url != WebDriver.Url); // Wait for "stay logged in?" screen before clicking button with the same id
         ClickButton(By.Id(SubmitButtonId));
+        
+        Wait.Until(driver => driver.Url == "https://teams.microsoft.com/v2/");
+        LoggedIn = true;
     }
 
     public void LogIn()
@@ -75,6 +81,7 @@ public class TeamsActions
 
     public void SelectChat(string chatName)
     {
+        CheckLoginStatus("select chat");
         Logger.LogAction($"Selecting chat '{chatName}'");
         string chatXPath = $"//*[starts-with(@title, '{chatName}')]";
 
@@ -101,6 +108,7 @@ public class TeamsActions
 
     public void SendFiles(List<string> fileNames)
     {
+        CheckLoginStatus("send files");
         OpenFileSelectPopup();
         
         // Select My files
@@ -129,6 +137,7 @@ public class TeamsActions
 
     public void SendMessage(string message)
     {
+        CheckLoginStatus("send message");
         Logger.LogAction("Sending message");
         FillField(ByDataTid(MessageFieldDataTid), message);
         ClickButton(ByDataTid(SendButtonDataTid));
@@ -198,4 +207,12 @@ public class TeamsActions
         itemNames.ForEach(itemName => ClickButton(By.XPath($"//*[text()='{itemName}']")));
         Actions.KeyUp(Keys.Control).Perform();
     }
+
+    private void CheckLoginStatus(string operation)
+    {
+        if (!LoggedIn)
+        {
+            throw new NotLoggedInException($"Cannot {operation} when not logged in");
+        }
+    } 
 }

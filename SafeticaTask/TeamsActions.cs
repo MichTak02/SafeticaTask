@@ -100,35 +100,15 @@ public class TeamsActions
 
     public void SendFiles(List<string> fileNames)
     {
-        // Click plus symbol
-        Logger.LogAction("Clicking on plus symbol to add file");
-        WaitForDisplayed(By.Name(PlusSymbolName)).Click();
+        OpenFileSelectPopup();
         
-        // Select attach file
-        Logger.LogAction("Selecting to attach file");
-        var flyoutListItems = GetMultipleElements(ByDataTid(FlyoutListDataTid), 3);
-        
-        var attachFileId = flyoutListItems.Select(item => item.GetAttribute("id")).First();
-        ClickButton(attachFileId);
-
-        // Select attach cloud file
-        Logger.LogAction("Selecting to attach cloud file");
-        WaitForDisplayed(ByDataTid(AttachFromCloudDataTid)).Click();
-        
-        // Switch to popup window
-        var iframes = GetMultipleElements(By.TagName("iframe"), 2);
-        var iframe = iframes.First(frame => frame.GetAttribute(FileSelectPopupAttribute) is not null);
-        WebDriver.SwitchTo().Frame(iframe);
-
         // Select My files
         Logger.LogAction("Selecting My files");
         Wait.Until(driver => driver.FindElement(By.ClassName(MyFilesClassName))).Click();
         
         // Select Files
         Logger.LogAction("Selecting file");
-        Actions.KeyDown(Keys.Control).Perform();
-        fileNames.ForEach(fileName => ClickButton(By.XPath($"//*[text()='{fileName}']")));
-        Actions.KeyUp(Keys.Control).Perform();
+        SelectMultipleItems(fileNames);
         
         // Click on attach file
         Logger.LogAction("Clicking on Attach file button");
@@ -149,6 +129,29 @@ public class TeamsActions
         Logger.LogAction("Sending message");
         FillField(ByDataTid(MessageFieldDataTid), message);
         ClickButton(ByDataTid(SendButtonDataTid));
+    }
+
+    private void OpenFileSelectPopup()
+    {
+        // Click plus symbol
+        Logger.LogAction("Clicking on plus symbol to add file");
+        WaitForDisplayed(By.Name(PlusSymbolName)).Click();
+        
+        // Select attach file
+        Logger.LogAction("Selecting to attach file");
+        var flyoutListItems = GetMultipleElements(ByDataTid(FlyoutListDataTid), 3);
+        
+        var attachFileId = flyoutListItems.Select(item => item.GetAttribute("id")).First();
+        ClickButton(attachFileId);
+
+        // Select attach cloud file
+        Logger.LogAction("Selecting to attach cloud file");
+        WaitForDisplayed(ByDataTid(AttachFromCloudDataTid)).Click();
+        
+        // Switch to popup window
+        var iframes = GetMultipleElements(By.TagName("iframe"), 2);
+        var iframe = iframes.First(frame => frame.GetAttribute(FileSelectPopupAttribute) is not null);
+        WebDriver.SwitchTo().Frame(iframe);
     }
     
     private void FillField(string id, string text)
@@ -199,5 +202,12 @@ public class TeamsActions
     private By ByDataTid(string value)
     {
         return By.XPath($"//*[@data-tid='{value}']");
+    }
+
+    private void SelectMultipleItems(List<string> itemNames)
+    {
+        Actions.KeyDown(Keys.Control).Perform();
+        itemNames.ForEach(itemName => ClickButton(By.XPath($"//*[text()='{itemName}']")));
+        Actions.KeyUp(Keys.Control).Perform();
     }
 }

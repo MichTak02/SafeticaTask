@@ -6,12 +6,10 @@ namespace SafeticaTask.Actions;
 
 public class GenericActions
 {
-    public WebDriver WebDriver { get; }
     public WebDriverWait Wait { get; }
 
-    public GenericActions(WebDriver webDriver, WebDriverWait wait)
+    public GenericActions(WebDriverWait wait)
     {
-        WebDriver = webDriver;
         Wait = wait;
     }
     

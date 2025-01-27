@@ -46,7 +46,7 @@ public class TeamsActions
         Logger = logger;
         Wait = new WebDriverWait(WebDriver, waitTimeout);
         LoggedIn = false;
-        GenericActions = new GenericActions(WebDriver, Wait);
+        GenericActions = new GenericActions(Wait);
     }
 
     public void LogIn(string login, string password)

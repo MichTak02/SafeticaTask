@@ -25,6 +25,7 @@ public class TeamsActions
     private static readonly string FileSelectPopupAttribute = "aria-label";
     private static readonly string MyFilesClassName = "navLink_26dbef85";
     private static readonly string PrimaryButtonClassName = "ms-Button--primary";
+    private static readonly string SelectedClassName = "navLinkSelected_26dbef85";
     
     private static readonly string MessageFieldDataTid = "ckeditor";
     private static readonly string SendButtonDataTid = "sendMessageCommands-send";
@@ -105,6 +106,8 @@ public class TeamsActions
         // Select My files
         Logger.LogAction("Selecting My files");
         Wait.Until(driver => driver.FindElement(By.ClassName(MyFilesClassName))).Click();
+        // Wait for tab to be selected to avoid StaleElementReferenceException
+        Wait.Until(driver => driver.FindElement(By.CssSelector($".{MyFilesClassName}.{SelectedClassName}")));
         
         // Select Files
         Logger.LogAction("Selecting file");

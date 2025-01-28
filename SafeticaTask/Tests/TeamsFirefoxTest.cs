@@ -10,6 +10,7 @@ public class TeamsFirefoxTest : CommonTest
     public void FirefoxSetup()
     {
         var options = new FirefoxOptions();
+        // Dont show cookies popup
         options.SetPreference("network.cookie.cookieBehavior", 0);
         Driver = new FirefoxDriver(options);
         Wait = new WebDriverWait(Driver, WaitTimeOut);

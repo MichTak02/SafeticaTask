@@ -125,7 +125,9 @@ public class TeamsActions
 
         WebDriver.SwitchTo().DefaultContent();
         Logger.LogAction("Sending file(s)");
+        DateTime beforeSentTime = DateTime.Now;
         GenericActions.ClickButton(ByExtensions.ByDataTid(SendButtonWithFileDataTid));
+        WaitForSent(beforeSentTime);
     }
 
     public void SendFiles()
@@ -138,7 +140,10 @@ public class TeamsActions
         CheckLoginStatus("send message");
         Logger.LogAction($"Sending message '{message}'");
         GenericActions.FillField(ByExtensions.ByDataTid(MessageFieldDataTid), message);
+
+        DateTime beforeSentTime = DateTime.Now;
         GenericActions.ClickButton(ByExtensions.ByDataTid(SendButtonDataTid));
+        WaitForSent(beforeSentTime);
     }
 
     public List<TeamsMessage> GetLastMessages(int count)
@@ -198,5 +203,14 @@ public class TeamsActions
         {
             throw new NotLoggedInException($"Cannot {operation} when not logged in");
         }
+    }
+
+    private void WaitForSent(DateTime minimalDateTime)
+    {
+        Wait.Until(driver =>
+        {
+            var timeElements = driver.FindElements(By.TagName("time"));
+            return timeElements.Any(element => DateTime.Parse(element.GetAttribute("datetime")) > minimalDateTime);
+        });
     }
 }

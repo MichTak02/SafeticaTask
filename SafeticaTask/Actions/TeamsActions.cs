@@ -1,6 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SafeticaTask.Exceptions;
+using SafeticaTask.Utils;
 
 namespace SafeticaTask.Actions;
 
@@ -36,17 +37,13 @@ public class TeamsActions
     public bool LoggedIn { get; private set; }
     public GenericActions GenericActions { get; }
 
-    public TeamsActions(WebDriver webDriver, TestLogger logger) : this(webDriver, logger, DefaultWaitTimeout)
-    {
-    }
-
-    public TeamsActions(WebDriver webDriver, TestLogger logger, TimeSpan waitTimeout)
+    public TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait wait, GenericActions genericActions)
     {
         WebDriver = webDriver;
         Logger = logger;
-        Wait = new WebDriverWait(WebDriver, waitTimeout);
+        Wait = wait;
         LoggedIn = false;
-        GenericActions = new GenericActions(Wait);
+        GenericActions = genericActions;
     }
 
     public void LogIn(string login, string password)
@@ -125,7 +122,7 @@ public class TeamsActions
 
         WebDriver.SwitchTo().DefaultContent();
         Logger.LogAction("Sending file(s)");
-        GenericActions.ClickButton(ByDataTid(SendButtonWithFileDataTid));
+        GenericActions.ClickButton(ByExtensions.ByDataTid(SendButtonWithFileDataTid));
     }
 
     public void SendFiles()
@@ -137,8 +134,8 @@ public class TeamsActions
     {
         CheckLoginStatus("send message");
         Logger.LogAction($"Sending message '{message}'");
-        GenericActions.FillField(ByDataTid(MessageFieldDataTid), message);
-        GenericActions.ClickButton(ByDataTid(SendButtonDataTid));
+        GenericActions.FillField(ByExtensions.ByDataTid(MessageFieldDataTid), message);
+        GenericActions.ClickButton(ByExtensions.ByDataTid(SendButtonDataTid));
     }
     
     public void OpenFileSelectPopup()
@@ -149,24 +146,19 @@ public class TeamsActions
         
         // Select attach file
         Logger.LogAction("Selecting to attach file");
-        var flyoutListItems = GenericActions.GetMultipleElementsRange(ByDataTid(FlyoutListDataTid), 2, 3);
+        var flyoutListItems = GenericActions.GetMultipleElementsRange(ByExtensions.ByDataTid(FlyoutListDataTid), 2, 3);
         
         var attachFileId = flyoutListItems.Select(item => item.GetAttribute("id")).First();
         GenericActions.ClickButton(By.Id(attachFileId));
 
         // Select attach cloud file
         Logger.LogAction("Selecting to attach cloud file");
-        GenericActions.WaitForDisplayed(ByDataTid(AttachFromCloudDataTid)).Click();
+        GenericActions.WaitForDisplayed(ByExtensions.ByDataTid(AttachFromCloudDataTid)).Click();
         
         // Switch to popup window
         var iframes = GenericActions.GetMultipleElements(By.TagName("iframe"), 2);
         var iframe = iframes.First(frame => frame.GetAttribute(FileSelectPopupAttribute) is not null);
         WebDriver.SwitchTo().Frame(iframe);
-    }
-
-    private By ByDataTid(string value)
-    {
-        return By.XPath($"//*[@data-tid='{value}']");
     }
 
     private void CheckLoginStatus(string operation)

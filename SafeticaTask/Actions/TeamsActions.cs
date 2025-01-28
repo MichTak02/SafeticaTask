@@ -6,6 +6,14 @@ using SafeticaTask.Utils;
 
 namespace SafeticaTask.Actions;
 
+
+/// <summary>
+/// Class for performing actions on MS Teams webpage using selenium
+/// </summary>
+/// <param name="webDriver">Browser web driver</param>
+/// <param name="logger">Logger for logging actions</param>
+/// <param name="wait">WebDriverWait instance to wait for elements during operations</param>
+/// <param name="genericActions">GenericActions class for performing generic tasks</param>
 public class TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait wait, GenericActions genericActions)
 {
     private const string TeamsUrl = "https://teams.microsoft.com/v2/";
@@ -40,7 +48,12 @@ public class TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait 
     public bool LoggedIn { get; private set; } = false;
     public GenericActions GenericActions { get; } = genericActions;
 
-    public void LogIn(string login, string password)
+    /// <summary>
+    /// Logs user into a MS Teams account
+    /// </summary>
+    /// <param name="login">account to use</param>
+    /// <param name="password">password to use</param>
+    public void LogIn(string login = DefaultLogin, string password = DefaultPassword)
     {
         Logger.LogAction($"Navigating to {TeamsUrl}");
         WebDriver.Navigate().GoToUrl(TeamsUrl);
@@ -63,12 +76,11 @@ public class TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait 
         LoggedIn = true;
     }
 
-    public void LogIn()
-    {
-        LogIn(DefaultLogin, DefaultPassword);
-    }
-
-    public void SelectChat(string chatName)
+    /// <summary>
+    /// Selects MS Teams chat by chat name
+    /// </summary>
+    /// <param name="chatName">chat name</param>
+    public void SelectChat(string chatName = DefaultChatName)
     {
         CheckLoginStatus("select chat");
         Logger.LogAction($"Selecting chat '{chatName}'");
@@ -80,21 +92,19 @@ public class TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait 
         ((IJavaScriptExecutor)WebDriver).ExecuteScript("arguments[0].click();", chatElement);
     }
 
-    public void SelectChat()
-    {
-        SelectChat(DefaultChatName);
-    }
-
-    public void SendFile(string fileName)
+    /// <summary>
+    /// Sends file from OneDrive to selected chat
+    /// </summary>
+    /// <param name="fileName">File name</param>
+    public void SendFile(string fileName = DefaultFileName1)
     {
         SendFiles([fileName]);
     }
 
-    public void SendFile()
-    {
-        SendFile(DefaultFileName1);
-    }
-
+    /// <summary>
+    /// Sends multiple files from OneDrive to selected chat
+    /// </summary>
+    /// <param name="fileNames">List of file names</param>
     public void SendFiles(List<string> fileNames)
     {
         CheckLoginStatus("send files");
@@ -121,11 +131,18 @@ public class TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait 
         WaitForSent(beforeSentTime);
     }
 
+    /// <summary>
+    /// Overloaded method for SendFiles with default file names
+    /// </summary>
     public void SendFiles()
     {
         SendFiles([DefaultFileName1, DefaultFileName2]);
     }
 
+    /// <summary>
+    /// Sends text message to selected chat
+    /// </summary>
+    /// <param name="message">text message</param>
     public void SendMessage(string message)
     {
         CheckLoginStatus("send message");
@@ -137,6 +154,11 @@ public class TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait 
         WaitForSent(beforeSentTime);
     }
 
+    /// <summary>
+    /// Gets most recently posted messages
+    /// </summary>
+    /// <param name="count">Number of messages</param>
+    /// <returns>List of messages</returns>
     public List<TeamsMessage> GetLastMessages(int count)
     {
         List<TeamsMessage> messages = [];
@@ -165,6 +187,9 @@ public class TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait 
         return messages;
     }
     
+    /// <summary>
+    /// Opens popup for selecting files from OneDrive
+    /// </summary>
     private void OpenFileSelectPopup()
     {
         // Click plus symbol
@@ -188,6 +213,11 @@ public class TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait 
         WebDriver.SwitchTo().Frame(iframe);
     }
 
+    /// <summary>
+    /// Checks if user is logged in
+    /// </summary>
+    /// <param name="operation">Operation to do after checking login status</param>
+    /// <exception cref="NotLoggedInException">Thrown if user is not logged in</exception>
     private void CheckLoginStatus(string operation)
     {
         if (!LoggedIn)
@@ -196,6 +226,10 @@ public class TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait 
         }
     }
 
+    /// <summary>
+    /// Waits for message to be sent
+    /// </summary>
+    /// <param name="minimalDateTime">Lowest time the message was sent at</param>
     private void WaitForSent(DateTime minimalDateTime)
     {
         Wait.Until(driver =>

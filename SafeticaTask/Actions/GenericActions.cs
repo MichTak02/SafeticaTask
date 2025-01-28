@@ -57,10 +57,11 @@ public class GenericActions
     /// </summary>
     /// <param name="by">elements identifier</param>
     /// <param name="number">number of elements to get</param>
+    /// <param name="mustBeDisplayed">true if elements must be displayed</param>
     /// <returns>Returns found elements</returns>
-    public ReadOnlyCollection<IWebElement> GetMultipleElements(By by, int number)
+    public ReadOnlyCollection<IWebElement> GetMultipleElements(By by, int number, bool mustBeDisplayed = true)
     {
-        return GetMultipleElementsRange(by, number, number);
+        return GetMultipleElementsRange(by, number, number, mustBeDisplayed);
     }
 
     /// <summary>
@@ -69,8 +70,9 @@ public class GenericActions
     /// <param name="by">elements identifier</param>
     /// <param name="min">minimum elements to load</param>
     /// <param name="max">maximum elements to load or -1 for no upper bound</param>
+    /// <param name="mustBeDisplayed">true if elements must be displayed</param>
     /// <returns>Returns found elements</returns>
-    public ReadOnlyCollection<IWebElement> GetMultipleElementsRange(By by, int min, int max)
+    public ReadOnlyCollection<IWebElement> GetMultipleElementsRange(By by, int min, int max, bool mustBeDisplayed = true)
     {
         if (max == -1)
         {
@@ -82,7 +84,7 @@ public class GenericActions
             var elements = driver.FindElements(by);
             bool inRange = elements.Count >= min && elements.Count <= max;
             bool areDisplayed = elements.All(element => element.Displayed);
-            return inRange && areDisplayed ? elements : null;
+            return inRange && (!mustBeDisplayed || areDisplayed) ? elements : null;
         });
     }
 }

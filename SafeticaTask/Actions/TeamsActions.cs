@@ -187,7 +187,7 @@ public class TeamsActions
         GenericActions.WaitForDisplayed(ByExtensions.ByDataTid(AttachFromCloudDataTid)).Click();
         
         // Switch to popup window
-        var iframes = GenericActions.GetMultipleElements(By.TagName("iframe"), 2);
+        var iframes = GenericActions.GetMultipleElements(By.TagName("iframe"), 2, false);
         var iframe = iframes.First(frame => frame.GetAttribute(FileSelectPopupAttribute) is not null);
         WebDriver.SwitchTo().Frame(iframe);
     }

@@ -33,11 +33,11 @@ public class CommonTest
 
         if (testResult.Equals(ResultState.Success))
         {
-            TestLogger.LogTestPassed(TestName);
+            TestLogger?.LogTestPassed(TestName);
             return;
         }
 
         var failMessage = TestContext.CurrentContext.Result.Message ?? "";
-        TestLogger.LogTestFailed(TestName, failMessage);
+        TestLogger?.LogTestFailed(TestName, failMessage);
     }
 }

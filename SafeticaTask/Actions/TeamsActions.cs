@@ -8,32 +8,32 @@ namespace SafeticaTask.Actions;
 
 public class TeamsActions
 {
-    private static readonly string TeamsUrl = "https://teams.microsoft.com/v2/";
-    private static readonly string DefaultLogin = "qa@safeticaservices.onmicrosoft.com";
-    private static readonly string DefaultPassword = "automation.Safetica2004";
+    private const string TeamsUrl = "https://teams.microsoft.com/v2/";
+    private const string DefaultLogin = "qa@safeticaservices.onmicrosoft.com";
+    private const string DefaultPassword = "automation.Safetica2004";
 
-    private static readonly string LoginFieldId = "i0116";
-    private static readonly string PasswordFieldId = "i0118";
-    private static readonly string SubmitButtonId = "idSIButton9";
-    private static readonly string DefaultChatName = "Safetica QA";
-    private static readonly string DefaultFileName1 = "PdfFile.pdf";
-    private static readonly string DefaultFileName2 = "TxtFile.txt";
+    private const string LoginFieldId = "i0116";
+    private const string PasswordFieldId = "i0118";
+    private const string SubmitButtonId = "idSIButton9";
+    private const string DefaultChatName = "Safetica QA";
+    public const string DefaultFileName1 = "PdfFile.pdf";
+    public const string DefaultFileName2 = "TxtFile.txt";
 
-    private static readonly string PlusSymbolName = "message-extension-flyout-command";
-    private static readonly string FlyoutListDataTid = "flyout-list-item";
-    private static readonly string AttachFromCloudDataTid = "file-attach-from-onedrive";
-    private static readonly string FileSelectPopupAttribute = "aria-label";
-    private static readonly string MyFilesClassName = "navLink_26dbef85";
-    private static readonly string PrimaryButtonClassName = "ms-Button--primary";
-    private static readonly string SelectedClassName = "navLinkSelected_26dbef85";
-    
-    private static readonly string MessageFieldDataTid = "ckeditor";
-    private static readonly string SendButtonDataTid = "sendMessageCommands-send";
-    private static readonly string SendButtonWithFileDataTid = "newMessageCommands-send";
-    
-    private static readonly string MessageDataTestId = "message-wrapper";
-    private static readonly string AttachmentHeaderCassName = "ui-attachment__header";
-    
+    private const string PlusSymbolName = "message-extension-flyout-command";
+    private const string FlyoutListDataTid = "flyout-list-item";
+    private const string AttachFromCloudDataTid = "file-attach-from-onedrive";
+    private const string FileSelectPopupAttribute = "aria-label";
+    private const string MyFilesClassName = "navLink_26dbef85";
+    private const string PrimaryButtonClassName = "ms-Button--primary";
+    private const string SelectedClassName = "navLinkSelected_26dbef85";
+
+    private const string MessageFieldDataTid = "ckeditor";
+    private const string SendButtonDataTid = "sendMessageCommands-send";
+    private const string SendButtonWithFileDataTid = "newMessageCommands-send";
+
+    private const string MessageDataTestId = "message-wrapper";
+    private const string AttachmentHeaderCassName = "ui-attachment__header";
+
     public WebDriver WebDriver { get; }
     public TestLogger Logger { get; }
     public WebDriverWait Wait { get; }

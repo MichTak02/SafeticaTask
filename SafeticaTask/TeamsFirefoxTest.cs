@@ -16,4 +16,23 @@ public class TeamsFirefoxTest : CommonTest
         GenericActions = new GenericActions(Wait);
         TeamsActions = new TeamsActions(Driver, TestLogger, Wait, GenericActions);
     }
+    
+    [Test]
+    public void SendTwoOneDriveFilesAtOnce()
+    {
+        string filename1 = TeamsActions.DefaultFileName1;
+        string filename2 = TeamsActions.DefaultFileName2;
+        
+        TeamsActions?.LogIn();
+        TeamsActions?.SelectChat();
+        DateTime beginSendTime = DateTime.Now;
+        TeamsActions?.SendFiles([filename1, filename2]);
+        DateTime afterSendTime = DateTime.Now;
+        var message = TeamsActions?.GetLastMessages(1)[0];
+        
+        Assert.That(message?.TimeSent, Is.GreaterThanOrEqualTo(beginSendTime).And.LessThanOrEqualTo(afterSendTime));
+        Assert.That(message?.Files.Count, Is.EqualTo(2));
+        Assert.That(message?.Files[0], Is.EqualTo(filename1));
+        Assert.That(message?.Files[1], Is.EqualTo(filename2));
+    }
 }

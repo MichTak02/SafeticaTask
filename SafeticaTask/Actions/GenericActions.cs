@@ -80,7 +80,9 @@ public class GenericActions
         return Wait.Until(driver =>
         {
             var elements = driver.FindElements(by);
-            return elements.Count >= min && elements.Count <= max ? elements : null;
+            bool inRange = elements.Count >= min && elements.Count <= max;
+            bool areDisplayed = elements.All(element => element.Displayed);
+            return inRange && areDisplayed ? elements : null;
         });
     }
 }

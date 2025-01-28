@@ -35,4 +35,32 @@ public class TeamsFirefoxTest : CommonTest
         Assert.That(message?.Files[0], Is.EqualTo(filename1));
         Assert.That(message?.Files[1], Is.EqualTo(filename2));
     }
+    
+    [Test]
+    public void SendThreeChatMessages()
+    {
+        List<string> messagesToSend = new List<string>();
+
+        for (int i = 0; i < 3; i++)
+        {
+            messagesToSend.Add($"{TestName}.{TestContext.CurrentContext.Test.ID}#{i+1}");
+        }
+        
+        TeamsActions?.LogIn();
+        TeamsActions?.SelectChat();
+        DateTime beginSendTime = DateTime.Now;
+        messagesToSend.ForEach(message => TeamsActions?.SendMessage(message));
+        DateTime afterSendTime = DateTime.Now;
+
+        var messages = TeamsActions?.GetLastMessages(3);
+        Assert.That(messages, Is.Not.Null);
+        Assert.That(messages.Count, Is.EqualTo(3));
+
+        for (int i = 0; i < 3; i++)
+        {
+            Assert.That(messages[i].TimeSent, Is.GreaterThanOrEqualTo(beginSendTime).And.LessThanOrEqualTo(afterSendTime));
+            Assert.That(messages[i].Files, Is.Empty);
+            Assert.That(messages[i].Message, Is.EqualTo(messagesToSend[i]));
+        }
+    }
 }

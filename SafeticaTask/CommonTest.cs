@@ -9,7 +9,7 @@ namespace SafeticaTask;
 public class CommonTest
 {
     protected static readonly TimeSpan WaitTimeOut = TimeSpan.FromSeconds(15);
-    protected readonly TestLogger TestLogger = new(TestLogger.DefaultLogFilePath);
+    protected TestLogger? TestLogger;
     protected string TestName => TestContext.CurrentContext.Test.FullName;
     protected WebDriver? Driver;
     protected TeamsActions? TeamsActions;
@@ -19,6 +19,8 @@ public class CommonTest
     [SetUp]
     public void Setup()
     {
+        string logFileName = $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}-{TestName}.txt";
+        TestLogger = new TestLogger(logFileName);
         TestLogger.LogTestStart(TestName);
     }
 

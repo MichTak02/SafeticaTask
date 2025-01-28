@@ -3,11 +3,24 @@ namespace SafeticaTask.Utils;
 /// <summary>
 /// Class for logging test actions
 /// </summary>
-/// <param name="logFilePath">Path to file for logging</param>
-public class TestLogger(string logFilePath)
+public class TestLogger
 {
-    public static readonly string DefaultLogFilePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "logs", "log.txt");
-    private string LogFilePath { get; } = logFilePath;
+    private static readonly string LogDir = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "logs");
+
+    /// <summary>
+    /// Class for logging test actions
+    /// </summary>
+    /// <param name="logFileName">Path to file for logging</param>
+    public TestLogger(string logFileName)
+    {
+        LogFileName = logFileName;
+        if (!Directory.Exists(LogDir))
+        {
+            Directory.CreateDirectory(LogDir);
+        }
+    }
+
+    private string LogFileName { get; }
 
     /// <summary>
     /// Method for writing messages associated with current time to log file
@@ -15,7 +28,7 @@ public class TestLogger(string logFilePath)
     /// <param name="message">Message to write in test file</param>
     public void LogAction(string message)
     {
-        using StreamWriter writer = new StreamWriter(LogFilePath, append: true);
+        using StreamWriter writer = new StreamWriter(Path.Join(LogDir, LogFileName), append: true);
         writer.WriteLine($"{DateTime.Now:s} {message}");
     }
 

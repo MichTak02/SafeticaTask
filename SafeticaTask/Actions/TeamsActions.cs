@@ -8,7 +8,6 @@ namespace SafeticaTask.Actions;
 
 public class TeamsActions
 {
-    private static readonly TimeSpan DefaultWaitTimeout = TimeSpan.FromSeconds(15);
     private static readonly string TeamsUrl = "https://teams.microsoft.com/v2/";
     private static readonly string DefaultLogin = "qa@safeticaservices.onmicrosoft.com";
     private static readonly string DefaultPassword = "automation.Safetica2004";

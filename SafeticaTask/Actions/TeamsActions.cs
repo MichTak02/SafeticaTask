@@ -6,7 +6,7 @@ using SafeticaTask.Utils;
 
 namespace SafeticaTask.Actions;
 
-public class TeamsActions
+public class TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait wait, GenericActions genericActions)
 {
     private const string TeamsUrl = "https://teams.microsoft.com/v2/";
     private const string DefaultLogin = "qa@safeticaservices.onmicrosoft.com";
@@ -34,20 +34,11 @@ public class TeamsActions
     private const string MessageDataTestId = "message-wrapper";
     private const string AttachmentHeaderCassName = "ui-attachment__header";
 
-    public WebDriver WebDriver { get; }
-    public TestLogger Logger { get; }
-    public WebDriverWait Wait { get; }
-    public bool LoggedIn { get; private set; }
-    public GenericActions GenericActions { get; }
-
-    public TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait wait, GenericActions genericActions)
-    {
-        WebDriver = webDriver;
-        Logger = logger;
-        Wait = wait;
-        LoggedIn = false;
-        GenericActions = genericActions;
-    }
+    public WebDriver WebDriver { get; } = webDriver;
+    public TestLogger Logger { get; } = logger;
+    public WebDriverWait Wait { get; } = wait;
+    public bool LoggedIn { get; private set; } = false;
+    public GenericActions GenericActions { get; } = genericActions;
 
     public void LogIn(string login, string password)
     {

@@ -42,11 +42,11 @@ public class TeamsActions(WebDriver webDriver, TestLogger logger, WebDriverWait 
     private const string MessageDataTestId = "message-wrapper";
     private const string AttachmentHeaderCassName = "ui-attachment__header";
 
-    public WebDriver WebDriver { get; } = webDriver;
-    public TestLogger Logger { get; } = logger;
-    public WebDriverWait Wait { get; } = wait;
-    public bool LoggedIn { get; private set; } = false;
-    public GenericActions GenericActions { get; } = genericActions;
+    private WebDriver WebDriver { get; } = webDriver;
+    private TestLogger Logger { get; } = logger;
+    private WebDriverWait Wait { get; } = wait;
+    private bool LoggedIn { get; set; }
+    private GenericActions GenericActions { get; } = genericActions;
 
     /// <summary>
     /// Logs user into a MS Teams account

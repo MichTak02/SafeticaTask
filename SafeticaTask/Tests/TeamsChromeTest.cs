@@ -10,7 +10,7 @@ public class TeamsChromeTest : CommonTest
     public void ChromeSetup()
     {
         Driver = new ChromeDriver();
-        Wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(15));
+        Wait = new WebDriverWait(Driver, WaitTimeOut);
         GenericActions = new GenericActions(Wait);
         TeamsActions = new TeamsActions(Driver, TestLogger, Wait, GenericActions);
     }

@@ -12,7 +12,7 @@ public class TeamsFirefoxTest : CommonTest
         var options = new FirefoxOptions();
         options.SetPreference("network.cookie.cookieBehavior", 0);
         Driver = new FirefoxDriver(options);
-        Wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(15));
+        Wait = new WebDriverWait(Driver, WaitTimeOut);
         GenericActions = new GenericActions(Wait);
         TeamsActions = new TeamsActions(Driver, TestLogger, Wait, GenericActions);
     }

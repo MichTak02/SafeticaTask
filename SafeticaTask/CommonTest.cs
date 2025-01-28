@@ -8,6 +8,7 @@ namespace SafeticaTask;
 
 public class CommonTest
 {
+    protected static readonly TimeSpan WaitTimeOut = TimeSpan.FromSeconds(15);
     protected readonly TestLogger TestLogger = new(TestLogger.DefaultLogFilePath);
     protected string TestName => TestContext.CurrentContext.Test.FullName;
     protected WebDriver? Driver;

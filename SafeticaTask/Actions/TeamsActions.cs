@@ -1,6 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SafeticaTask.Exceptions;
+using SafeticaTask.Models;
 using SafeticaTask.Utils;
 
 namespace SafeticaTask.Actions;
@@ -30,6 +31,9 @@ public class TeamsActions
     private static readonly string MessageFieldDataTid = "ckeditor";
     private static readonly string SendButtonDataTid = "sendMessageCommands-send";
     private static readonly string SendButtonWithFileDataTid = "newMessageCommands-send";
+    
+    private static readonly string MessageDataTestId = "message-wrapper";
+    private static readonly string AttachmentHeaderCassName = "ui-attachment__header";
     
     public WebDriver WebDriver { get; }
     public TestLogger Logger { get; }
@@ -137,8 +141,36 @@ public class TeamsActions
         GenericActions.FillField(ByExtensions.ByDataTid(MessageFieldDataTid), message);
         GenericActions.ClickButton(ByExtensions.ByDataTid(SendButtonDataTid));
     }
+
+    public List<TeamsMessage> GetLastMessages(int count)
+    {
+        List<TeamsMessage> messages = [];
+        var allMessageElements = GenericActions.GetMultipleElementsRange(ByExtensions.ByDataTestId(MessageDataTestId), count, -1);
+        var messageElements = allMessageElements.TakeLast(count);
+        
+        foreach (var messageElement in messageElements)
+        {
+            var files = Wait.Until(_ => messageElement.FindElements(By.ClassName(AttachmentHeaderCassName)));
+            var filenames = files.Select(file => file.Text).ToList();
+            var stringTime = messageElement.FindElement(By.TagName("time")).GetAttribute("datetime");
+            var time = DateTime.Parse(stringTime);
+            var message = "";
+
+            try
+            {
+                message = messageElement.FindElement(By.TagName("p")).Text;
+            }
+            catch (NoSuchElementException)
+            {
+            }
+            
+            messages.Add(new TeamsMessage(message, filenames, time));
+        }
+        
+        return messages;
+    }
     
-    public void OpenFileSelectPopup()
+    private void OpenFileSelectPopup()
     {
         // Click plus symbol
         Logger.LogAction("Clicking on plus symbol to add file");
@@ -167,5 +199,5 @@ public class TeamsActions
         {
             throw new NotLoggedInException($"Cannot {operation} when not logged in");
         }
-    } 
+    }
 }

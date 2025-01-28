@@ -42,7 +42,7 @@ public class GenericActions
     /// Waits for element to load and be displayed
     /// </summary>
     /// <param name="by">element identifier</param>
-    /// <returns></returns>
+    /// <returns>Returns found element</returns>
     public IWebElement WaitForDisplayed(By by)
     {
         return Wait.Until(driver =>
@@ -57,7 +57,7 @@ public class GenericActions
     /// </summary>
     /// <param name="by">elements identifier</param>
     /// <param name="number">number of elements to get</param>
-    /// <returns></returns>
+    /// <returns>Returns found elements</returns>
     public ReadOnlyCollection<IWebElement> GetMultipleElements(By by, int number)
     {
         return GetMultipleElementsRange(by, number, number);
@@ -69,7 +69,7 @@ public class GenericActions
     /// <param name="by">elements identifier</param>
     /// <param name="min">minimum elements to load</param>
     /// <param name="max">maximum elements to load or -1 for no upper bound</param>
-    /// <returns></returns>
+    /// <returns>Returns found elements</returns>
     public ReadOnlyCollection<IWebElement> GetMultipleElementsRange(By by, int min, int max)
     {
         if (max == -1)

@@ -1,4 +1,4 @@
-namespace SafeticaTask;
+namespace SafeticaTask.Utils;
 
 /// <summary>
 /// Class for logging test actions

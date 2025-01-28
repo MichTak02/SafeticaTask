@@ -2,6 +2,7 @@ using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SafeticaTask.Actions;
+using SafeticaTask.Utils;
 
 namespace SafeticaTask;
 

@@ -2,7 +2,7 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using SafeticaTask.Actions;
 
-namespace SafeticaTask;
+namespace SafeticaTask.Tests;
 
 public class TeamsFirefoxTest : CommonTest
 {

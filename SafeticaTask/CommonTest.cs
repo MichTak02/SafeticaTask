@@ -1,13 +1,18 @@
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using SafeticaTask.Actions;
 
 namespace SafeticaTask;
 
 public class CommonTest
 {
     protected readonly TestLogger TestLogger = new(TestLogger.DefaultLogFilePath);
-    private string TestName => TestContext.CurrentContext.Test.FullName;
+    protected string TestName => TestContext.CurrentContext.Test.FullName;
     protected WebDriver? Driver;
+    protected TeamsActions? TeamsActions;
+    protected WebDriverWait? Wait;
+    protected GenericActions? GenericActions;
 
     [SetUp]
     public void Setup()
